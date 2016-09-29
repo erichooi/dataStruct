@@ -46,6 +46,7 @@ void selectionSort(std::vector<int> &vector)
 		int minIndex = i;
 		for (int j = i + 1; j < vector.size(); j++) {
 			if (vector[j] < min) {
+				min = vector[j];
 				minIndex = j;
 			}
 		}
@@ -54,15 +55,14 @@ void selectionSort(std::vector<int> &vector)
 		}
 		std::cout << "Sorting (" << i << ")";
 		for (int k = 0; k < vector.size(); k++) {
-		}
 			std::cout << vector[k] << " ";
 		}
 		std::cout << "\n";
-	}
+		}
 }
 
 int main() {
-	std::vector<int> vector {10,5,30,90,2,0,32,50,100};
+	std::vector<int> vector {2,5,6,10,0,9,7};
 	std::cout << "Before Sort: ";
 	for (std::vector<int>::iterator itr=vector.begin(); itr < vector.end(); itr++) {
 		std::cout << *itr << " ";
