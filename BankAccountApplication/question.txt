@@ -1,0 +1,8 @@
+Bank Account Application
+
+*** requirement
+** create account (max 10 account)
+** deposit money
+** withdraw money
+** print detail statement (transaction)
+** save into external file // optional
