@@ -81,59 +81,77 @@ void insertionSort(std::vector<int> &vector)
 
 // Complex Sort
 
-void merge(std::vector<int> &vector, int left, int middle, int right) 
+// merge sort
+template <typename Comparable>
+void mergeSort(std::vector<Comparable> &, std::vector<Comparable> &, int, int);
+template <typename Comparable>
+void merge(std::vector<Comparable> &, std::vector<Comparable> &, int, int, int);
+
+/**
+ * Merge Sort algorithm
+ */
+template <typename Comparable>
+void mergeSort(std::vector<Comparable> &a)
 {
-	int i, j, k;
-	int n1 = middle - left + 1;
-	int n2 = right - middle;
-	
-	//	create temp vector
-	std::vector<int> LEFT(n1), RIGHT(n2);
-	
-	// copy data to temp vector LEFT and right
-	for (i = 0; i < n1; i++) {
-		LEFT.push_back(vector[left+i]);
-	}
-	for (j = 0; j < n2; j++) {
-		RIGHT.push_back(vector[middle + 1 + j]);
-	}
-	
-	// merge the temp back to vector 
-	i = 0;
-	j = 0;
-	k = left;
-	while (i < n1 && j < n2) {
-		if (LEFT[i] <= RIGHT[j]) {
-			vector[k] = LEFT[i];
-			i++;
-		} else {
-			vector[k] = RIGHT[i];
-			j++;
-		}
-		k++;
-	}
-	
-	//	copy the remaining elements of LEFT and RIGHT if left
-	while (i < n1) {
-		vector[k] = LEFT[i];
-		i++;
-		k++;
-	}
-	while (j < n2) {
-		vector[k] = RIGHT[j];
-		j++;
-		k++;
-	}
+    std::vector<Comparable> tmpArray(a.size());
+    mergeSort(a, tmpArray, 0, a.size()-1);
 }
 
-void mergeSort(std::vector<int> &vector, int left, int right) 
+/**
+ * Internal method that make recursive calls.
+ * a is an array of Comparable items.
+ * tmpArray is an array to place the merged result
+ * left is the left-most index of the subarray
+ * right is the right-most index of the subarray
+ */
+template <typename Comparable>
+void mergeSort(std::vector<Comparable> &a,
+               std::vector<Comparable> &tmpArray, int left, int right)
 {
-	if (left < right) {
-		int middle = left+(right)/2;
-		mergeSort(vector, left, middle);
-		mergeSort(vector, middle+1, right);
-		merge(vector, left, middle, right);
-	}
+    if (left < right) {
+        int center = (left + right) / 2;
+        mergeSort(a, tmpArray, left, center);
+        mergeSort(a, tmpArray, center + 1, right);
+        merge(a, tmpArray, left, center + 1, right);
+    }
+}
+
+/**
+ * Internal method that merges two sorted halves of the subarray
+ * a is an array of Comparable items
+ * tmpArray is an array to place the merged result
+ * leftPos is the left-most index of the subarray
+ * rightPos is the index of the start of the second half
+ * rightEnd is the right-most index of the subarray
+ */
+template <typename Comparable>
+void merge(std::vector<Comparable> &a, std::vector<Comparable> &tmpArray,
+           int leftPos, int rightPos, int rightEnd)
+{
+    int leftEnd = rightPos - 1;
+    int tmpPos = leftPos;
+    int numElements = rightEnd - leftPos + 1;
+
+    // main loop
+    while (leftPos <= leftEnd && rightPos <= rightEnd) {
+        if (a[leftPos] <= a[rightPos]) {
+            tmpArray[tmpPos++] = std::move(a[leftPos++]);
+        } else {
+            tmpArray[tmpPos++] = std::move(a[rightPos++]);
+        }
+    }
+
+    while (leftPos <= leftEnd) {
+        tmpArray[tmpPos++] = std::move(a[leftPos++]);
+    }
+
+    while (rightPos <= rightEnd) {
+        tmpArray[tmpPos++] = std::move(a[rightPos++]);
+    }
+
+    for (int i = 0; i < numElements; ++i, --rightEnd) {
+        a[rightEnd] = std::move(tmpArray[rightEnd]);
+    }
 }
 
 
@@ -144,7 +162,7 @@ int main() {
 		std::cout << *itr << " ";
 	}
 	std::cout << "\n";
-	mergeSort(vector, 0, vector.size());	
+	mergeSort(vector);	
 	std::cout << "After Sort: ";
 	for (std::vector<int>::iterator itr=vector.begin(); itr < vector.end(); itr++) {
 		std::cout << *itr << " ";
